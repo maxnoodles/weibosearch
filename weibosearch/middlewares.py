@@ -9,6 +9,8 @@ from scrapy import signals
 import requests
 import json
 import logging
+from datetime import datetime, timedelta
+from fake_useragent import UserAgent
 
 from scrapy.exceptions import IgnoreRequest
 
@@ -75,3 +77,32 @@ class CookiesMiddleware(object):
             return request
         else:
             return response
+
+class UAMiddleware(object):
+
+    def __init__(self):
+        self.UA = UserAgent()
+
+    def process_request(self, request, spider):
+        if self.UA:
+            request.headers['User-Agent'] = self.UA.random
+        return None
+
+class ProxyMiddleware(object):
+
+    def __init__(self):
+        self.url = 'http://127.0.0.1:5000/random'
+        self.no_proxy_time = datetime.now()
+        self.recover_interval = 1
+        self.timing = 3
+
+
+    # def process_exception(self, request, exception, spider):
+    def process_request(self, request, spider):
+        if datetime.now() > (self.no_proxy_time+timedelta(minutes=self.recover_interval)):
+            if datetime.now() > (self.no_proxy_time+timedelta(minutes=self.timing)):
+                self.no_proxy_time = datetime.now()
+            proxy = requests.get(url=self.url).text
+            if proxy:
+                request.meta['proxy'] = 'http://' + proxy
+            return None

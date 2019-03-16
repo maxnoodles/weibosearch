@@ -46,15 +46,15 @@ ROBOTSTXT_OBEY = False
 #TELNETCONSOLE_ENABLED = False
 
 # Override the default request headers:
-DEFAULT_REQUEST_HEADERS = {
-    "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-    "Accept-Encoding":"gzip, deflate, br",
-    "Accept-Language":"zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2",
-    "Cache-Control":"max-age=0",
-    "Connection":"keep-alive",
-    "Host":"weibo.cn",
-    "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36"
-}
+# DEFAULT_REQUEST_HEADERS = {
+#     "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+#     "Accept-Encoding":"gzip, deflate, br",
+#     "Accept-Language":"zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2",
+#     "Cache-Control":"max-age=0",
+#     "Connection":"keep-alive",
+#     "Host":"weibo.cn",
+#     "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36"
+# }
 
 # Enable or disable spider middlewares
 # See https://doc.scrapy.org/en/latest/topics/spider-middleware.html
@@ -66,6 +66,8 @@ DEFAULT_REQUEST_HEADERS = {
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
    'weibosearch.middlewares.CookiesMiddleware': 543,
+   'weibosearch.middlewares.UAMiddleware': 200,
+   'weibosearch.middlewares.ProxyMiddleware': 100,
 }
 
 # DOWNLOAD_DELAY = 5
@@ -80,7 +82,7 @@ DOWNLOADER_MIDDLEWARES = {
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
    'weibosearch.pipelines.WeibosearchPipeline': 300,
-   'weibosearch.pipelines.MongoPipeline': 300,
+   'weibosearch.pipelines.MongoPipeline': 303,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -117,3 +119,9 @@ COOKIES_POOL_URL = 'http://127.0.0.1:5001/weibo/random'
 
 MONGO_URI = 'localhost'
 MONGO_DATABASE = 'weibo'
+
+SCHEDULER = "scrapy_redis.scheduler.Scheduler"
+DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
+REDIS_URL = 'redis://root:noodles@192.168.230.1:6379'
+
+SCHEDULER_PERSIST = True

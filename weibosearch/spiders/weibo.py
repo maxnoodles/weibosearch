@@ -8,21 +8,22 @@ class WeiboSpider(Spider):
     allowed_domains = ['weibo.cn']
     search_url = 'https://weibo.cn/search/mblog'
     max_page = 200
-    keyword = '000001'
+    keywords = ['000001']
 
     def start_requests(self):
         """
         使用关键字搜索，post提交
         :return:
         """
-        url = '{url}?keyword={keyword}'.format(url=self.search_url, keyword=self.keyword)
-        for page in range(self.max_page+1):
-            data = {
-                'mp':str(self.max_page),
-                'page':str(page)
-            }
+        for keyword in self.keywords:
+            url = '{url}?keyword={keyword}'.format(url=self.search_url, keyword=keyword)
+            for page in range(self.max_page+1):
+                data = {
+                    'mp':str(100),
+                    'page':str(self.max_page)
+                }
 
-            yield FormRequest(url=url, formdata=data, callback=self.parse_index)
+                yield FormRequest(url=url, formdata=data, callback=self.parse_index)
 
 
     def parse_index(self, response):
